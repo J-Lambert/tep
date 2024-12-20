@@ -1,18 +1,20 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Characters/TEPPlayerState.h"
+#include "Characters/TEPCompanion.h"
 
 #include "AbilitySystem/TEPAbilitySystemComponent.h"
 #include "AbilitySystem/TEPAttributeSet.h"
 
-ATEPPlayerState::ATEPPlayerState()
+ATEPCompanion::ATEPCompanion()
 {
 	AbilitySystemComponent = CreateDefaultSubobject<UTEPAbilitySystemComponent>("AbilitySystemComponent");
 	AttributeSet = CreateDefaultSubobject<UTEPAttributeSet>("AttributeSet");
 }
 
-UAbilitySystemComponent* ATEPPlayerState::GetAbilitySystemComponent() const
+void ATEPCompanion::BeginPlay()
 {
-	return AbilitySystemComponent;
+	Super::BeginPlay();
+
+	AbilitySystemComponent->InitAbilityActorInfo(this, this);
 }

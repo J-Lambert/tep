@@ -3,22 +3,24 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Character.h"
-#include "PlayerCharacter.generated.h"
+#include "Characters/TEPCharacterBase.h"
+#include "TEPPlayer.generated.h"
 
 class UInputMappingContext;
 class UInputAction;
 class AChessTile;
 
 UCLASS()
-class THEEXILEDPANTHEON_API APlayerCharacter : public ACharacter
+class THEEXILEDPANTHEON_API ATEPPlayer : public ATEPCharacterBase
 {
 	GENERATED_BODY()
 
 public:
-	APlayerCharacter();
+	ATEPPlayer();
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	virtual void PossessedBy(AController* NewController) override;
 
 protected:
 	virtual void BeginPlay() override;

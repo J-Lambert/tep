@@ -4,25 +4,25 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystemInterface.h"
-#include "GameFramework/PlayerState.h"
-#include "TEPPlayerState.generated.h"
+#include "GameFramework/Character.h"
+#include "TEPCharacterBase.generated.h"
 
 class UAbilitySystemComponent;
 class UAttributeSet;
 
-/**
- * 
- */
-UCLASS()
-class THEEXILEDPANTHEON_API ATEPPlayerState : public APlayerState, public IAbilitySystemInterface
+UCLASS(Abstract)
+class THEEXILEDPANTHEON_API ATEPCharacterBase : public ACharacter, public IAbilitySystemInterface
 {
 	GENERATED_BODY()
+
 public:
-	ATEPPlayerState();
+	ATEPCharacterBase();
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	UAttributeSet* GetAttributeSet() const { return AttributeSet;}
 
 protected:
+	virtual void BeginPlay() override;
+
 	UPROPERTY()
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
 
