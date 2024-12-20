@@ -20,10 +20,10 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	
 	UFUNCTION()
-	void SetClickedTile();
+	void SetClickedTile() const;
 
 	UFUNCTION()
-	void SetHoveredTile();
+	void SetHoveredTile() const;
 
 protected:
 	virtual void BeginPlay() override;

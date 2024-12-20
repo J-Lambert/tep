@@ -43,15 +43,12 @@ void AChessTile::OnMouseExit(UPrimitiveComponent* TouchedComponent)
 	SpriteComponent->SetSprite(ChessTileDefaultSprite);
 }
 
-void AChessTile::SetClickedTile()
+void AChessTile::SetClickedTile() const
 {
 	SpriteComponent->SetSprite(ChessTileClickedSprite);
 }
 
-void AChessTile::SetHoveredTile()
+void AChessTile::SetHoveredTile() const
 {
 	SpriteComponent->SetSprite(ChessTileHoveredSprite);
 }
-
-
-
