@@ -18,7 +18,7 @@ class THEEXILEDPANTHEON_API ATEPCharacterBase : public ACharacter, public IAbili
 public:
 	ATEPCharacterBase();
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
-	UAttributeSet* GetAttributeSet() const { return AttributeSet;}
+	UAttributeSet* GetAttributeSet() const { return AttributeSet; }
 
 protected:
 	virtual void BeginPlay() override;

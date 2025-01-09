@@ -6,9 +6,8 @@
 #include "Characters/TEPCharacterBase.h"
 #include "TEPPlayer.generated.h"
 
-class UInputMappingContext;
-class UInputAction;
-class AChessTile;
+class USpringArmComponent;
+class UCameraComponent;
 
 UCLASS()
 class THEEXILEDPANTHEON_API ATEPPlayer : public ATEPCharacterBase
@@ -18,22 +17,25 @@ class THEEXILEDPANTHEON_API ATEPPlayer : public ATEPCharacterBase
 public:
 	ATEPPlayer();
 	virtual void Tick(float DeltaTime) override;
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	virtual void PossessedBy(AController* NewController) override;
 
+	void SetArmLength(const float Length);
+
+	float GetArmLength() const;
+
 protected:
 	virtual void BeginPlay() override;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	USpringArmComponent* SpringArm;
 
-	UPROPERTY(EditAnywhere, Category = Input)
-	UInputMappingContext* CombatContext;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	UCameraComponent* Camera;
 
-	UPROPERTY(EditAnywhere, Category = Input)
-	UInputAction* ClickAction;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float ArmLength = 300.f;
 
-	UPROPERTY(VisibleInstanceOnly)
-	AChessTile* ClickedTile;
-
-	void LeftMouseClicked();
-	void LeftMouseReleased();
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	double ArmYRotation = -45.0;
 };

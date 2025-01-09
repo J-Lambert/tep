@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Characters/TEPPlayerState.h"
+#include "Player/TEPPlayerState.h"
 
 #include "AbilitySystem/TEPAbilitySystemComponent.h"
 #include "AbilitySystem/TEPAttributeSet.h"

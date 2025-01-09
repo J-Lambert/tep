@@ -19,9 +19,11 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+	// Number of rows on the chessboard
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Size")
 	uint8 Height = 5;
 
+	// Number of columns on the chessboard
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Size")
 	uint8 Width = 5;
 
