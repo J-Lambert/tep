@@ -1,0 +1,25 @@
+# Godot 4+
+.godot/
+
+# Imported assets
+.import/
+
+# Mono/C#
+.mono/
+data_*/
+
+#Builds
+export/
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# IDEs
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+/android/
