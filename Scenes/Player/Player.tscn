@@ -1,8 +1,13 @@
 [gd_scene format=3 uid="uid://xfvm5xegfqja"]
 
-[ext_resource type="Script" uid="uid://bpbah8b45xvbp" path="res://Scripts/Player/Player.cs" id="1_s0eop"]
+[ext_resource type="Script" uid="uid://bpbah8b45xvbp" path="res://Scripts/Game/Player/Player.cs" id="1_s0eop"]
+[ext_resource type="Texture2D" uid="uid://cita77kf321e2" path="res://Art/Sprites/Characters/DonKiTick/don_kitick.png" id="2_ft8w5"]
 
 [node name="Player" type="Node2D" unique_id=409015976]
 script = ExtResource("1_s0eop")
+PlayerSprite = ExtResource("2_ft8w5")
+PlayerSpriteOffset = Vector2(0, -2)
 
 [node name="Sprite" type="Sprite2D" parent="." unique_id=390268388]
+texture_filter = 1
+scale = Vector2(0.5, 0.5)

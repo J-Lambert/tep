@@ -2,7 +2,8 @@
 
 [ext_resource type="Script" uid="uid://d1skbp86cs3sk" path="res://Scripts/Tile/Tile.cs" id="1_5kclj"]
 
-[node name="Tile" type="Node2D" unique_id=590998106]
+[node name="Tile" type="Node2D" unique_id=590998106 node_paths=PackedStringArray("TileSprite")]
 script = ExtResource("1_5kclj")
+TileSprite = NodePath("Sprite")
 
 [node name="Sprite" type="Sprite2D" parent="." unique_id=1569501918]
