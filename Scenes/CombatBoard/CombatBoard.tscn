@@ -1,0 +1,12 @@
+[gd_scene format=3 uid="uid://cvflj0ictus3w"]
+
+[ext_resource type="Script" uid="uid://62aknbhc7obr" path="res://Scripts/Game/Combat/CombatBoard/CombatBoard.cs" id="1_qn5f1"]
+[ext_resource type="PackedScene" uid="uid://dl37x32hqayg8" path="res://Scenes/CombatTile/CombatTile.tscn" id="2_nydrt"]
+[ext_resource type="Texture2D" uid="uid://bwpf1wtm3jwef" path="res://Art/Sprites/CombatTiles/combat_tile_white.png" id="3_bspgx"]
+[ext_resource type="Texture2D" uid="uid://dgxovxw3vqthw" path="res://Art/Sprites/CombatTiles/combat_tile_black.png" id="4_ewal8"]
+
+[node name="CombatBoard" type="Node2D" unique_id=1011392558]
+script = ExtResource("1_qn5f1")
+TileScene = ExtResource("2_nydrt")
+MainTileTexture = ExtResource("3_bspgx")
+AltTileTexture = ExtResource("4_ewal8")
