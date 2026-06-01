@@ -11,11 +11,15 @@ namespace TEP.Game
 		[Export] public int TileSize = 16;
 		[Export] public TileMapLayer BlockingLayer;
 
+		// Time until player can move again, in seconds.
+		[Export] public float MoveCooldown = 0.1f;
+
 		// Coordinates of the player's current position in the tile grid.
 		public Vector2I GridPosition = Vector2I.Zero;
 
 		// Reference to the player's sprite node itself.
 		private Sprite2D _sprite;
+		private float _moveTimer = 0;
 
         public override void _Ready()
 		{
@@ -33,9 +37,22 @@ namespace TEP.Game
 			SnapToGrid();
 		}
 
-        public override void _UnhandledInput(InputEvent @event)
+        public override void _Process(double delta)
         {
-            HandleInput();
+			_moveTimer -= (float)delta;
+
+			if (_moveTimer > 0)
+			{
+				return;
+			}
+
+			Vector2I dir = GetInputDirection();
+
+			if (dir != Vector2I.Zero)
+			{
+				TryMoveInDirection(dir);
+				_moveTimer = MoveCooldown;
+			}
         }
 
 		// Snaps player position to the grid.
@@ -45,31 +62,40 @@ namespace TEP.Game
 			Position = (Vector2)(GridPosition * TileSize) + new Vector2(TileSize / 2, TileSize / 2);
 		}
 
-		private void HandleInput()
+		private Vector2I GetInputDirection()
 		{
+			int x = 0;
+			int y = 0;
 			Vector2I direction = Vector2I.Zero;
 
-			if (Input.IsActionJustPressed("move_up"))
+			if (Input.IsActionPressed("move_up"))
 			{
-				direction = Vector2I.Up;
+				y -= 1;
 			}
-			else if (Input.IsActionJustPressed("move_down"))
+			if (Input.IsActionPressed("move_down"))
 			{
-				direction = Vector2I.Down;
+				y += 1;
 			}
-			else if (Input.IsActionJustPressed("move_left"))
+			if (Input.IsActionPressed("move_left"))
 			{
-				direction = Vector2I.Left;
+				x -= 1;
 			}
-			else if (Input.IsActionJustPressed("move_right"))
+			if (Input.IsActionPressed("move_right"))
 			{
-				direction = Vector2I.Right;
+				x += 1;
 			}
 
-			if (direction != Vector2I.Zero)
+			if (y != 0)
 			{
-				TryMoveInDirection(direction);
+				return new Vector2I(0, y);
 			}
+
+			if (x != 0)
+			{
+				return new Vector2I(x, 0);
+			}
+
+			return Vector2I.Zero;
 		}
 
 		// Attempts to move the player using the 'direction' vector if no blocking tiles are in its way.
@@ -84,7 +110,6 @@ namespace TEP.Game
 			}
 
 			GridPosition = targetPosition;
-
 			SnapToGrid();
 		}
 
@@ -93,7 +118,12 @@ namespace TEP.Game
 		{
 			TileData tileData = BlockingLayer.GetCellTileData(gridPos);
 
-			return tileData != null;
+			if (tileData == null)
+			{
+				return false;
+			}
+
+			return (bool)tileData.GetCustomData("walkable") == false;
 		}
 	}
 }

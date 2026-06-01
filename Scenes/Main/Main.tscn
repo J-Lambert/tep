@@ -12,3 +12,4 @@ script = ExtResource("1_p8rbg")
 [node name="Player" parent="." unique_id=409015976 node_paths=PackedStringArray("BlockingLayer") instance=ExtResource("3_cmk6n")]
 position = Vector2(31, 58)
 BlockingLayer = NodePath("../Overworld/BlockingLayer")
+MoveCooldown = 0.2
