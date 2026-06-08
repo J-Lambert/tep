@@ -1,5 +1,6 @@
 namespace TEP.Game
 {
+	[GlobalClass]
 	public partial class Player : Node2D
 	{
 		[Export] public Texture2D PlayerSprite;
@@ -16,6 +17,9 @@ namespace TEP.Game
 
 		// Coordinates of the player's current position in the tile grid.
 		public Vector2I GridPosition = Vector2I.Zero;
+
+		// Used to calculate the center of a grid tile in pixels, on the screen.
+		private Vector2I _halfTileSize => new(TileSize / 2, TileSize / 2);
 
 		// Reference to the player's sprite node itself.
 		private Sprite2D _sprite;
@@ -55,11 +59,14 @@ namespace TEP.Game
 			}
         }
 
-		// Snaps player position to the grid.
-		private void SnapToGrid()
+		public Vector2I CalculateGridCoordinates(Vector2 boardPos)
 		{
-			// Ensures player is centered in the tile no matter the size.
-			Position = (Vector2)(GridPosition * TileSize) + new Vector2(TileSize / 2, TileSize / 2);
+			return (Vector2I)(boardPos / TileSize).Floor();
+		}
+
+		public Vector2 CalculateMapPosition(Vector2 gridPos)
+		{
+			return gridPos * TileSize + _halfTileSize;
 		}
 
 		private Vector2I GetInputDirection()
@@ -98,6 +105,26 @@ namespace TEP.Game
 			return Vector2I.Zero;
 		}
 
+		// Checks if a particular tile is in the 'Blocking' TileMapLayer.
+		private bool IsTileBlocked(Vector2I gridPos)
+		{
+			TileData tileData = BlockingLayer.GetCellTileData(gridPos);
+
+			if (tileData == null)
+			{
+				return false;
+			}
+
+			return (bool)tileData.GetCustomData("walkable") == false;
+		}
+
+		// Snaps player position to the grid.
+		private void SnapToGrid()
+		{
+			// Ensures player is centered in the tile no matter the size.
+			Position = (Vector2)(GridPosition * TileSize) + new Vector2(TileSize / 2, TileSize / 2);
+		}
+
 		// Attempts to move the player using the 'direction' vector if no blocking tiles are in its way.
 		private void TryMoveInDirection(Vector2I direction)
 		{
@@ -111,19 +138,6 @@ namespace TEP.Game
 
 			GridPosition = targetPosition;
 			SnapToGrid();
-		}
-
-		// Checks if a particular tile is in the 'Blocking' TileMapLayer.
-		private bool IsTileBlocked(Vector2I gridPos)
-		{
-			TileData tileData = BlockingLayer.GetCellTileData(gridPos);
-
-			if (tileData == null)
-			{
-				return false;
-			}
-
-			return (bool)tileData.GetCustomData("walkable") == false;
 		}
 	}
 }
