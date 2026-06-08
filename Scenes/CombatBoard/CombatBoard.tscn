@@ -8,10 +8,12 @@
 [node name="CombatBoard" type="Node2D" unique_id=1011392558]
 script = ExtResource("1_qn5f1")
 TileScene = ExtResource("2_nydrt")
-BoardWidth = 10
-BoardHeight = 10
+BoardWidth = 100
+BoardHeight = 100
 MainTileTexture = ExtResource("3_bspgx")
 AltTileTexture = ExtResource("4_ewal8")
+
+[node name="CombatCamera" type="Camera2D" parent="." unique_id=2115592925]
 
 [node name="TileContainer" type="Node2D" parent="." unique_id=611659738]
 
