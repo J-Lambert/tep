@@ -2,9 +2,7 @@
 
 [ext_resource type="TileSet" uid="uid://cgoan412uyvyu" path="res://Art/Tilesets/UnitPath/unit_path.tres" id="1_0r86r"]
 [ext_resource type="Script" uid="uid://y1itqivrtuc2" path="res://Scripts/Game/Combat/CombatUI/UnitPath/UnitPath.cs" id="2_245ky"]
-[ext_resource type="Resource" uid="uid://ca6bx4pvsxx3i" path="res://Resources/CombatGrid/CombatGrid.tres" id="3_245ky"]
 
 [node name="UnitPath" type="TileMapLayer" unique_id=100269267]
 tile_set = ExtResource("1_0r86r")
 script = ExtResource("2_245ky")
-Grid = ExtResource("3_245ky")

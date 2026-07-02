@@ -7,20 +7,20 @@ namespace TEP.Game.Combat
     // Finds the path between 2 points among walkable tiles using the A* algorithm.
     public partial class PathFinder : RefCounted
     {
-        private CombatGrid _grid;
+        private CombatBoard _board;
         private AStar2D _astar = new AStar2D();
 
         // Initializes the AStar2D object upon creation.
-        public PathFinder(CombatGrid grid, IEnumerable<Vector2I> walkableTiles)
+        public PathFinder(CombatBoard board, IEnumerable<Vector2I> walkableTiles)
         {
-            _grid = grid;
+            _board = board;
 
             // Caches a mapping between tile coordinates & their unique index.
             Dictionary<Vector2I, int> tileMappings = [];
             foreach (var tile in walkableTiles)
             {
                 // For each tile, a key-value pair of tile coordinates: index is defined.
-                tileMappings[tile] = _grid.AsIndex(tile);
+                tileMappings[tile] = _board.AsIndex(tile);
             }
 
             // All tiles are added to the AStar2D instance & connected to create the pathfinding graph.
@@ -30,8 +30,8 @@ namespace TEP.Game.Combat
         // Returns the path found between 'start' & 'end' as an array of Vector2I coordinates.
         public List<Vector2I> CalculatePointPath(Vector2I start, Vector2I end)
         {
-            int startIndex = _grid.AsIndex(start);
-            int endIndex = _grid.AsIndex(end);
+            int startIndex = _board.AsIndex(start);
+            int endIndex = _board.AsIndex(end);
 
             // Ensures the A* graph has both points defined. If not, returns an empty Vector2I array.
             if (_astar.HasPoint(startIndex) && _astar.HasPoint(endIndex))

@@ -4,15 +4,15 @@ namespace TEP.Game.Combat
 	{
 		[Export] public Sprite2D TileSprite;
 
-		public Vector2I GridPosition
+		public Vector2I BoardPosition
 		{
 			get;
 			private set;
 		}
 
-		public void Initialize(Vector2I gridPosition, Texture2D texture)
+		public void Initialize(Vector2I boardPosition, Texture2D texture)
 		{
-			GridPosition = gridPosition;
+			BoardPosition = boardPosition;
 			TileSprite.Texture = texture;
 		}
 	}

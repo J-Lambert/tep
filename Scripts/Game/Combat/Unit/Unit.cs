@@ -10,10 +10,10 @@ namespace TEP.Game.Combat
 		   the combat board that a unit reached its destination, so gameplay can continue.*/
 		[Signal] public delegate void UnitMoveFinishedEventHandler();
 
-		[Export] public CombatGrid Grid;
-
 		// Distance to which the unit can walk in tiles.
 		[Export(PropertyHint.Range, "0, 500")] public int MoveRange = 6;
+
+		[Export] public CombatBoard Board;
 
 		// Texture representing the unit.
 		[Export] public Texture2D UnitTexture;
@@ -65,8 +65,8 @@ namespace TEP.Game.Combat
 			}
 
 			// Initialize the tile property & snap the unit to the tile's center on the map.
-			Tile = Grid.CalculateGridCoordinates(Position);
-			Position = Grid.CalculateMapPosition(Tile);
+			Tile = Board.WorldToTile(Position);
+			Position = Board.TileToWorld(Tile);
 		}
 
 		public override void _Process(double delta)
@@ -126,7 +126,7 @@ namespace TEP.Game.Combat
 
 		private void SetTile(Vector2I value)
 		{
-			_tile = Grid.Clamp(value);
+			_tile = Board.Clamp(value);
 		}
 
 		// Starts unit moving along the path, an array of grid coordinates converted to map coordinates.
@@ -142,7 +142,7 @@ namespace TEP.Game.Combat
 
 			for (int i = 1; i < path.Count; i++)
 			{
-				_waypoints.Enqueue(Grid.CalculateMapPosition(path[i]));
+				_waypoints.Enqueue(Board.TileToWorld(path[i]));
 			}
 
 			if (_waypoints.Count == 0)

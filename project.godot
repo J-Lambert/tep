@@ -45,6 +45,7 @@ import/blender/enabled=false
 timers/tooltip_delay_sec=0.3
 timers/tooltip_delay_sec.editor_hint=0.3
 fonts/dynamic_fonts/use_oversampling=false
+theme/default_font_generate_mipmaps=true
 
 [input]
 
@@ -88,6 +89,7 @@ occlusion_culling/bvh_build_quality=0
 occlusion_culling/jitter_projection=false
 textures/canvas_textures/default_texture_filter=0
 renderer/rendering_method="mobile"
+textures/vram_compression/compress_with_gpu=false
 lights_and_shadows/directional_shadow/size=256
 lights_and_shadows/directional_shadow/size.mobile=256
 lights_and_shadows/directional_shadow/soft_shadow_filter_quality=0
@@ -97,7 +99,6 @@ shader_compiler/shader_cache/enabled=false
 shader_compiler/shader_cache/compress=false
 shader_compiler/shader_cache/use_zstd_compression=false
 shader_compiler/shader_cache/strip_debug.release=false
-reflections/sky_reflections/roughness_layers=1
 reflections/sky_reflections/texture_array_reflections=false
 reflections/reflection_atlas/reflection_size=0
 reflections/reflection_atlas/reflection_size.mobile=0

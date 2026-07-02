@@ -1,8 +1,0 @@
-[gd_resource type="Resource" script_class="CombatGrid" format=3 uid="uid://ca6bx4pvsxx3i"]
-
-[ext_resource type="Script" uid="uid://bueo2hi6bqnh8" path="res://Resources/CombatGrid/CombatGrid.cs" id="1_jnvfm"]
-
-[resource]
-script = ExtResource("1_jnvfm")
-GridSize = Vector2i(40, 40)
-metadata/_custom_type_script = "uid://bueo2hi6bqnh8"

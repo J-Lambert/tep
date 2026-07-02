@@ -11,9 +11,13 @@ namespace TEP.Game.Combat
 	public partial class CombatBoard : Node2D
 	{
 		[Export] public PackedScene TileScene;
-		[Export] public CombatGrid Grid;
 		[Export] public Texture2D MainTileTexture;
 		[Export] public Texture2D AltTileTexture;
+
+		// The grid's size in rows & columns.
+		[Export(PropertyHint.Range, "1,500")] public Vector2I GridSize = new(9, 9);
+		// The size of a tile in pixels.
+        [Export(PropertyHint.Range, "1,1024")] public Vector2I TileSize = new(16, 16);
 
 		// Margin around board in terms of a float percentage (0.1 = 10%)
 		[Export(PropertyHint.Range, "-3.0,3.0,0.01")] public float BoardPaddingX = 0.1f;
@@ -29,11 +33,12 @@ namespace TEP.Game.Combat
 
 		private UnitOverlay _unitOverlay;
 		private UnitPath _unitPath;
-
 		private Node2D _tileContainer;
 		private Node2D _unitContainer;
 		private Camera2D _camera;
 
+		// Used to calculate the center of a grid tile in pixels.
+        private Vector2 _halfTileSize => TileSize / 2;
 		private CombatTile[,] _tiles;
 
 
@@ -41,7 +46,6 @@ namespace TEP.Game.Combat
 		{
 			_unitOverlay = GetNode<UnitOverlay>("UnitOverlay");
 			_unitPath = GetNode<UnitPath>("UnitPath");
-
 			_tileContainer = GetNode<Node2D>("TileContainer");
 			_unitContainer = GetNode<Node2D>("UnitContainer");
 			_camera = GetNode<Camera2D>("CombatCamera");
@@ -105,7 +109,7 @@ namespace TEP.Game.Combat
 
 				// Conditions to fill further:
 				// 1. Not past the grid's limits.
-				if (!Grid.IsWithinBounds(current))
+				if (IsWithinBounds(current))
 				{
 					continue;
 				}
@@ -151,18 +155,18 @@ namespace TEP.Game.Combat
 		private void GenerateBoard()
 		{
 			// Initializes 2D array of tiles with a set width & height.
-			_tiles = new CombatTile[Grid.GridSize.X, Grid.GridSize.Y];
+			_tiles = new CombatTile[GridSize.X, GridSize.Y];
 
-			for (int y = 0; y < Grid.GridSize.Y; y++)
+			for (int y = 0; y < GridSize.Y; y++)
 			{
-				for (int x = 0; x < Grid.GridSize.X; x++)
+				for (int x = 0; x < GridSize.X; x++)
 				{
 					CombatTile tile = TileScene.Instantiate<CombatTile>();
 
-					Vector2 gridPos = new Vector2(x, y);
+					Vector2 tilePosInBoard = new Vector2(x, y);
 
 					_tileContainer.AddChild(tile);
-					tile.Position = Grid.CalculateMapPosition(gridPos);
+					tile.Position = TileToWorld(tilePosInBoard);
 
 					bool mainTile = (x + y) % 2 == 0;
 
@@ -175,7 +179,7 @@ namespace TEP.Game.Combat
 
 		public CombatTile GetTile(Vector2I position)
 		{
-			if (position.X < 0 || position.Y < 0 || position.X >= Grid.GridSize.X || position.Y >= Grid.GridSize.Y)
+			if (position.X < 0 || position.Y < 0 || position.X >= GridSize.X || position.Y >= GridSize.Y)
 			{
 				return null;
 			}
@@ -247,8 +251,8 @@ namespace TEP.Game.Combat
 		{
 			_camera.Enabled = true;
 
-			float boardPixelWidth = Grid.GridSize.X * Grid.TileSize.X;
-			float boardPixelHeight = Grid.GridSize.Y * Grid.TileSize.Y;
+			float boardPixelWidth = GridSize.X * TileSize.X;
+			float boardPixelHeight = GridSize.Y * TileSize.Y;
 
 			Vector2 viewportSize = GetViewportRect().Size;
 
@@ -300,5 +304,46 @@ namespace TEP.Game.Combat
 				await MoveActiveUnit(tile);
 			}
 		}
+
+		///////////////////////////////////////////////////////////////
+		/// Helper functions
+		// Converts 2D tile coordinates into a 1D array index.
+        public int AsIndex(Vector2I tile)
+        {
+            return tile.X + GridSize.X * tile.Y;
+        }
+
+        // Returns the coordinates of the tile on the grid given a position on the map.
+        public Vector2I WorldToTile(Vector2 worldPos)
+        {
+            return (Vector2I)(worldPos / TileSize).Floor();
+        }
+
+        // Returns the position of a tile's center in pixels.
+        public Vector2 TileToWorld(Vector2 tilePosInBoard)
+        {
+            return tilePosInBoard * TileSize + _halfTileSize;
+        }
+
+        // Makes the gridPosition fit within the grid's bounds by clamping each of the vector's values individually.
+        public Vector2I Clamp(Vector2I gridPos)
+        {
+            Vector2I clampedPos = gridPos;
+
+            clampedPos.X = Mathf.Clamp(gridPos.X, 0, GridSize.X - 1);
+            clampedPos.Y = Mathf.Clamp(gridPos.Y, 0, GridSize.Y - 1);
+
+            return clampedPos;
+        }
+
+        /* Returns true if the passed in tile coordinates are within the grid.
+           Used to ensure the cursor/units can never go past the grid's limits. */
+        public bool IsWithinBounds(Vector2I tileCoords)
+        {
+            bool insideX = tileCoords.X >= 0 && tileCoords.X < GridSize.X;
+            bool insideY = tileCoords.Y >= 0 && tileCoords.Y < GridSize.Y;
+
+            return insideX && insideY;
+        }
 	}
 }

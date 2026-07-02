@@ -2,12 +2,10 @@
 
 [ext_resource type="Texture2D" uid="uid://chb03plsvsx2e" path="res://Art/Sprites/UI/CombatUI/menu_selection_arrow.png" id="1_rhlpe"]
 [ext_resource type="Script" uid="uid://b7s8dyfcox4ah" path="res://Scripts/Game/Combat/CombatUI/Cursor/Cursor.cs" id="1_t4xvc"]
-[ext_resource type="Resource" uid="uid://ca6bx4pvsxx3i" path="res://Resources/CombatGrid/CombatGrid.tres" id="2_0oa44"]
 [ext_resource type="Texture2D" uid="uid://g6ktm4fe43q4" path="res://Art/Sprites/UI/CombatUI/tile_outline.png" id="4_sg8fl"]
 
 [node name="Cursor" type="Node2D" unique_id=2111927244]
 script = ExtResource("1_t4xvc")
-Grid = ExtResource("2_0oa44")
 
 [node name="CursorSprite" type="Sprite2D" parent="." unique_id=1955812213]
 position = Vector2(20, -20)

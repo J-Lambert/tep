@@ -2,7 +2,6 @@
 
 [ext_resource type="Texture2D" uid="uid://c2gxcqxf51ait" path="res://Art/Sprites/Units/RabbitSnail/Rabbit Snail.png" id="1_7bw4q"]
 [ext_resource type="Script" uid="uid://del8uv8fqr1u6" path="res://Scripts/Game/Combat/Unit/Unit.cs" id="1_t8my3"]
-[ext_resource type="Resource" uid="uid://ca6bx4pvsxx3i" path="res://Resources/CombatGrid/CombatGrid.tres" id="2_bxx5k"]
 
 [sub_resource type="Animation" id="Animation_t8my3"]
 length = 0.001
@@ -59,7 +58,6 @@ _data = {
 
 [node name="Unit" type="Node2D" unique_id=1812090049]
 script = ExtResource("1_t8my3")
-Grid = ExtResource("2_bxx5k")
 UnitTexture = ExtResource("1_7bw4q")
 
 [node name="Sprite" type="Sprite2D" parent="." unique_id=573056320]

@@ -9,8 +9,6 @@ namespace TEP.Game.Combat.UI
 		// Emitted when the cursor is moved to a new tile.
 		[Signal] public delegate void CursorMovedEventHandler(Vector2 newTile);
 
-		[Export] public CombatGrid Grid;
-
 		// Coordinates of the current tile the cursor is hovering.
 		public Vector2I Tile
 		{
@@ -19,12 +17,13 @@ namespace TEP.Game.Combat.UI
 		}
 
 		private Vector2I _tile = Vector2I.Zero;
+		private CombatBoard _board;
 
 		// Snap cursor position to center of tile once it enters the scene tree.
 		public override void _Ready()
 		{
-
-			Position = Grid.CalculateMapPosition(_tile);
+			_board = GetParent<CombatBoard>();
+			_board.TileToWorld(_tile);
 		}
 
         public override void _UnhandledInput(InputEvent @event)
@@ -34,7 +33,7 @@ namespace TEP.Game.Combat.UI
 			{
 				// Convert mouse position to global coordinates to compensate for Camera2D zoom/position.
 				Vector2 worldPos = GetGlobalMousePosition();
-				Tile = Grid.CalculateGridCoordinates(worldPos);
+				Tile = _board.WorldToTile(worldPos);
 			}
 			// If tile is already being hovered & is clicked/"ui_accept" (Enter) key is pressed, interact with that tile.
 			else if (@event.IsActionPressed("click") || @event.IsActionPressed("ui_accept"))
@@ -47,7 +46,7 @@ namespace TEP.Game.Combat.UI
 		private void SetTile(Vector2I value)
 		{
 			// Clamp tile coordinates & ensure it's not outside the grid's boundaries.
-			Vector2I newTile = Grid.Clamp(value);
+			Vector2I newTile = _board.Clamp(value);
 			if (newTile.Equals(_tile))
 			{
 				return;
@@ -55,7 +54,7 @@ namespace TEP.Game.Combat.UI
 			_tile = newTile;
 
 			// If new tile is moved to, update cursor's position & emit a signal.
-			Position = Grid.CalculateMapPosition(_tile);
+			Position = _board.TileToWorld(_tile);
 			EmitSignal(SignalName.CursorMoved, _tile);
 		}
 	}
