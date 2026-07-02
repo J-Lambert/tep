@@ -1,3 +1,9 @@
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using TEP.Game.Combat.UI;
+using TEP.Game.Core;
+
 namespace TEP.Game.Combat
 {
 	/* Represents a grid of tiles with its size, the size of each tile in pixels, & some helper functions to calculate
@@ -5,14 +11,7 @@ namespace TEP.Game.Combat
 	public partial class CombatBoard : Node2D
 	{
 		[Export] public PackedScene TileScene;
-
-		// Chessboard width & height in terms of tiles.
-		[Export(PropertyHint.Range, "1,10000")] public int BoardWidth = 9;
-		[Export(PropertyHint.Range, "1,10000")] public int BoardHeight = 9;
-
-		// Tile size in pixels.
-		[Export(PropertyHint.Range, "1,1024")] public int TileSize = 16;
-
+		[Export] public CombatGrid Grid;
 		[Export] public Texture2D MainTileTexture;
 		[Export] public Texture2D AltTileTexture;
 
@@ -20,19 +19,28 @@ namespace TEP.Game.Combat
 		[Export(PropertyHint.Range, "-3.0,3.0,0.01")] public float BoardPaddingX = 0.1f;
 		[Export(PropertyHint.Range, "-3.0,3.0,0.01")] public float BoardPaddingY = 0.1f;
 
+		/* Each key-value pair in the dictionary represents a unit. The key is the position in grid
+		   coordinates, while the value is a reference to the unit. */
+		private Dictionary<Vector2I, Unit> _units = [];
+		private Unit _activeUnit;
+
+		// Array of all the tiles the _activeUnit can move to.
+		private List<Vector2I> _walkableTiles = [];
+
+		private UnitOverlay _unitOverlay;
+		private UnitPath _unitPath;
+
 		private Node2D _tileContainer;
 		private Node2D _unitContainer;
 		private Camera2D _camera;
 
 		private CombatTile[,] _tiles;
-		private int _halfTileSize = 0;
+
 
 		public override void _Ready()
 		{
-			ValidateBoardSettings();
-
-			// Prevents calculating this for every tile created.
-			_halfTileSize = TileSize / 2;
+			_unitOverlay = GetNode<UnitOverlay>("UnitOverlay");
+			_unitPath = GetNode<UnitPath>("UnitPath");
 
 			_tileContainer = GetNode<Node2D>("TileContainer");
 			_unitContainer = GetNode<Node2D>("UnitContainer");
@@ -40,31 +48,121 @@ namespace TEP.Game.Combat
 
 			GenerateBoard();
 			SetupCamera();
+
+			foreach (Node child in _unitContainer.GetChildren())
+			{
+				if (child is Unit unit)
+				{
+					RegisterUnit(unit);
+				}
+			}
 		}
 
-		public CombatTile GetTile(Vector2I position)
-		{
-			if (position.X < 0 || position.Y < 0 || position.X >= BoardWidth || position.Y >= BoardHeight)
+        public override void _UnhandledInput(InputEvent @event)
+        {
+            if (_activeUnit != null && @event.IsActionPressed("ui_cancel"))
 			{
-				return null;
+				DeselectActiveUnit();
+				ClearActiveUnit();
+			}
+        }
+
+		// Clears the reference to the _activeUnit & corresponding walkable tiles.
+		private void ClearActiveUnit()
+		{
+			_activeUnit = null;
+			_walkableTiles.Clear();
+		}
+
+		// Deselects the active unit, clearing the tiles overlay & move path.
+		private void DeselectActiveUnit()
+		{
+			if (_activeUnit == null)
+			{
+				return;
 			}
 
-			return _tiles[position.X, position.Y];
+			_activeUnit.IsSelected = false;
+
+			_unitOverlay.Clear();
+			_unitPath.Stop();
+		}
+
+		// Returns an array with all the coordinates of walkable tiles based on maxDistance.
+		private List<Vector2I> FloodFill(Vector2I startTile, int maxDistance)
+		{
+			// Output list.
+			List<Vector2I> result = [];
+			HashSet<Vector2I> visited = [];
+
+			// Every tile to apply the flood fill algorithm to is stored in the stack.
+			Stack<Vector2I> stack = new();
+			stack.Push(startTile);
+
+			while (stack.Count > 0)
+			{
+				Vector2I current = stack.Pop();
+
+				// Conditions to fill further:
+				// 1. Not past the grid's limits.
+				if (!Grid.IsWithinBounds(current))
+				{
+					continue;
+				}
+
+				// 2. Tile hasn't already been visited & filled.
+				if (!visited.Add(current))
+				{
+					continue;
+				}
+
+				// 3. Within the maxDistance # of tiles.
+				Vector2I difference = (current - startTile).Abs();
+				int distance = difference.X + difference.Y;
+				if (distance > maxDistance)
+				{
+					continue;
+				}
+
+				// If all conditions are met, 'current' tile is stored in the output array.
+				result.Add(current);
+
+				// If current tile's neighbors are not occupied/already visited, they are added to the stack.
+				foreach (Vector2I direction in GridDirections.Cardinal)
+				{
+					Vector2I coords = current + direction;
+
+					if (IsOccupied(coords) && coords != startTile)
+					{
+						continue;
+					}
+					if (visited.Contains(coords))
+					{
+						continue;
+					}
+
+					stack.Push(coords);
+				}
+			}
+
+			return result;
 		}
 
 		private void GenerateBoard()
 		{
 			// Initializes 2D array of tiles with a set width & height.
-			_tiles = new CombatTile[BoardWidth, BoardHeight];
+			_tiles = new CombatTile[Grid.GridSize.X, Grid.GridSize.Y];
 
-			for (int y = 0; y < BoardHeight; y++)
+			for (int y = 0; y < Grid.GridSize.Y; y++)
 			{
-				for (int x = 0; x < BoardWidth; x++)
+				for (int x = 0; x < Grid.GridSize.X; x++)
 				{
 					CombatTile tile = TileScene.Instantiate<CombatTile>();
 
+					Vector2 gridPos = new Vector2(x, y);
+
 					_tileContainer.AddChild(tile);
-					tile.Position = new Vector2I((x * TileSize) + _halfTileSize, (y * TileSize) + _halfTileSize);
+					tile.Position = Grid.CalculateMapPosition(gridPos);
 
 					bool mainTile = (x + y) % 2 == 0;
 
@@ -75,12 +173,82 @@ namespace TEP.Game.Combat
 			}
 		}
 
+		public CombatTile GetTile(Vector2I position)
+		{
+			if (position.X < 0 || position.Y < 0 || position.X >= Grid.GridSize.X || position.Y >= Grid.GridSize.Y)
+			{
+				return null;
+			}
+
+			return _tiles[position.X, position.Y];
+		}
+
+		// Returns an array of tiles a given unit can walk to using the flood fill algorithm.
+		public List<Vector2I> GetWalkableTiles(Unit unit)
+		{
+			return FloodFill(unit.Tile, unit.MoveRange);
+		}
+
+		// Returns true if the tile is occupied by a unit.
+		public bool IsOccupied(Vector2I tile)
+		{
+			return _units.ContainsKey(tile);
+		}
+
+		// Updates the _units dictionary with the target position for the unit & asks the _activeUnit to walk to it.
+		private async Task MoveActiveUnit(Vector2I newTile)
+		{
+			if (IsOccupied(newTile) || !_walkableTiles.Contains(newTile))
+			{
+				return;
+			}
+
+			Vector2I oldTile = _activeUnit.Tile;
+
+			List<Vector2I> path = new(_unitPath.CurrentPath);
+
+			DeselectActiveUnit();
+
+			_activeUnit.WalkAlong(path);
+
+			await ToSignal(_activeUnit, Unit.SignalName.UnitMoveFinished);
+
+			_units.Remove(oldTile);
+			_activeUnit.Tile = newTile;
+			_units[newTile] = _activeUnit;
+
+			ClearActiveUnit();
+		}
+
+		public void RegisterUnit(Unit unit)
+		{
+			_units[unit.Tile] = unit;
+		}
+
+		/* Selects the unit in the tile, if there is one. Sets it as the _activeUnit & draws its walkable tiles & move
+		   path. The board reacts to signals emitted by calling functions that select & move the unit. */
+		private void SelectUnit(Vector2I tile)
+		{
+			// Return early from the function if the unit's not registered in the tile.
+			if (!_units.ContainsKey(tile))
+			{
+				return;
+			}
+
+			_activeUnit = _units[tile];
+			_activeUnit.IsSelected = true;
+
+			_walkableTiles = GetWalkableTiles(_activeUnit).ToList();
+			_unitOverlay.Draw(_walkableTiles);
+			_unitPath.Initialize(_walkableTiles);
+		}
+
 		private void SetupCamera()
 		{
 			_camera.Enabled = true;
 
-			float boardPixelWidth = BoardWidth * TileSize;
-			float boardPixelHeight = BoardHeight * TileSize;
+			float boardPixelWidth = Grid.GridSize.X * Grid.TileSize.X;
+			float boardPixelHeight = Grid.GridSize.Y * Grid.TileSize.Y;
 
 			Vector2 viewportSize = GetViewportRect().Size;
 
@@ -96,13 +264,41 @@ namespace TEP.Game.Combat
 			_camera.Zoom = new Vector2(zoom * (1 - BoardPaddingX), zoom * (1 - BoardPaddingY));
 		}
 
-		// Prevents invalid values being passed into various board functions.
-		private void ValidateBoardSettings()
+		public void UnregisterUnit(Unit unit)
 		{
-				BoardWidth = Mathf.Max(BoardWidth, 1);
-				BoardHeight = Mathf.Max(BoardHeight, 1);
-				TileSize = Mathf.Max(TileSize, 1);
+			if (_units.TryGetValue(unit.Tile, out Unit existing) && existing == unit)
+			{
+				_units.Remove(unit.Tile);
+			}
+		}
+
+		// Updates the path's drawing if there's an active & selected unit.
+		private void OnCursorMoved(Vector2I newTile)
+		{
+			if (_activeUnit != null && _activeUnit.IsSelected)
+			{
+				if (!_walkableTiles.Contains(newTile))
+				{
+					_unitPath.Stop();
+					return;
+				}
+
+				_unitPath.DrawPath(_activeUnit.Tile, newTile);
+			}
+		}
+
+		// Selects/moves a unit based on where the cursor is.
+		private async void OnCursorAcceptPressed(Vector2I tile)
+		{
+			// This interaction either causes a unit to be selected or a move order to be executed.
+			if (_activeUnit == null)
+			{
+				SelectUnit(tile);
+			}
+			else if (_activeUnit.IsSelected)
+			{
+				await MoveActiveUnit(tile);
+			}
 		}
 	}
 }
-

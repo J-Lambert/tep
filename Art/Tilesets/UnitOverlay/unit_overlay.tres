@@ -1,0 +1,10 @@
+[gd_resource type="TileSet" format=3 uid="uid://sj45l53dar4j"]
+
+[ext_resource type="Texture2D" uid="uid://5o1a5j2lso3c" path="res://Art/Sprites/UI/CombatUI/unit_overlay.png" id="1_v0dvx"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_fcmsa"]
+texture = ExtResource("1_v0dvx")
+0:0/0 = 0
+
+[resource]
+sources/0 = SubResource("TileSetAtlasSource_fcmsa")

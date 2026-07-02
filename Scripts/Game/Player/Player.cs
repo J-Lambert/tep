@@ -9,11 +9,11 @@ namespace TEP.Game
 		[Export] public Vector2 PlayerSpriteOffset = Vector2.Zero;
 
 		// Size of each tile in pixels.
-		[Export] public int TileSize = 16;
+		[Export(PropertyHint.Range, "1,1024")] public int TileSize = 16;
 		[Export] public TileMapLayer BlockingLayer;
 
 		// Time until player can move again, in seconds.
-		[Export] public float MoveCooldown = 0.1f;
+		[Export(PropertyHint.Range, "0.01, 2.0, 0.01")] public float MoveCooldown = 0.1f;
 
 		// Coordinates of the player's current position in the tile grid.
 		public Vector2I GridPosition = Vector2I.Zero;
@@ -51,7 +51,6 @@ namespace TEP.Game
 			}
 
 			Vector2I dir = GetInputDirection();
-
 			if (dir != Vector2I.Zero)
 			{
 				TryMoveInDirection(dir);
@@ -96,7 +95,6 @@ namespace TEP.Game
 			{
 				return new Vector2I(0, y);
 			}
-
 			if (x != 0)
 			{
 				return new Vector2I(x, 0);

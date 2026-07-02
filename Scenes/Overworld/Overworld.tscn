@@ -1,6 +1,6 @@
 [gd_scene format=4 uid="uid://k4giqpys68nm"]
 
-[ext_resource type="TileSet" uid="uid://dctvxfcdhfs8w" path="res://Resources/exile_tileset.tres" id="1_fvdb5"]
+[ext_resource type="TileSet" uid="uid://dctvxfcdhfs8w" path="res://Resources/Tilesets/exile_tileset.tres" id="1_fvdb5"]
 
 [node name="Overworld" type="Node2D" unique_id=1381374353]
 

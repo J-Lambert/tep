@@ -4,7 +4,6 @@ namespace TEP.Game
 	{
 		public override void _Ready()
 		{
-			GD.Print("The Exiled Pantheon");
 		}
 
 		public override void _Process(double delta)

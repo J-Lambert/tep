@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://comf07ogdglxt"
-path="res://.godot/imported/exile_tileset.png-58171b357d0f2206aa72c8eb68389b07.ctex"
+uid="uid://g6ktm4fe43q4"
+path="res://.godot/imported/tile_outline.png-470dce85a66a69164841f93e811b3c07.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Art/Tilesets/exile_tileset.png"
-dest_files=["res://.godot/imported/exile_tileset.png-58171b357d0f2206aa72c8eb68389b07.ctex"]
+source_file="res://Art/Sprites/UI/CombatUI/tile_outline.png"
+dest_files=["res://.godot/imported/tile_outline.png-470dce85a66a69164841f93e811b3c07.ctex"]
 
 [params]
 

@@ -1,0 +1,74 @@
+[gd_resource type="TileSet" format=3 uid="uid://cgoan412uyvyu"]
+
+[ext_resource type="Texture2D" uid="uid://do1fqbe0i8jw0" path="res://Art/Sprites/UI/CombatUI/arrows.svg" id="1_0i8d2"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_u0kfw"]
+texture = ExtResource("1_0i8d2")
+0:0/size_in_atlas = Vector2i(5, 5)
+0:0/0 = 0
+0:0/0/terrain_set = 0
+0:0/0/terrain = 0
+5:0/size_in_atlas = Vector2i(5, 5)
+5:0/0 = 0
+5:0/0/terrain_set = 0
+5:0/0/terrain = 0
+5:0/0/terrains_peering_bit/right_side = 0
+5:0/0/terrains_peering_bit/left_side = 0
+10:0/size_in_atlas = Vector2i(5, 5)
+10:0/0 = 0
+10:0/0/terrain_set = 0
+10:0/0/terrain = 0
+10:0/0/terrains_peering_bit/bottom_side = 0
+10:0/0/terrains_peering_bit/top_side = 0
+15:0/size_in_atlas = Vector2i(5, 5)
+15:0/0 = 0
+15:5/size_in_atlas = Vector2i(5, 5)
+15:5/0 = 0
+15:5/0/terrain_set = 0
+15:5/0/terrain = 0
+15:5/0/terrains_peering_bit/left_side = 0
+10:5/size_in_atlas = Vector2i(5, 5)
+10:5/0 = 0
+10:5/0/terrain_set = 0
+10:5/0/terrain = 0
+10:5/0/terrains_peering_bit/bottom_side = 0
+5:5/size_in_atlas = Vector2i(5, 5)
+5:5/0 = 0
+5:5/0/terrain_set = 0
+5:5/0/terrain = 0
+5:5/0/terrains_peering_bit/bottom_side = 0
+5:5/0/terrains_peering_bit/left_side = 0
+0:5/size_in_atlas = Vector2i(5, 5)
+0:5/0 = 0
+0:5/0/terrain_set = 0
+0:5/0/terrain = 0
+0:5/0/terrains_peering_bit/right_side = 0
+0:5/0/terrains_peering_bit/bottom_side = 0
+0:10/size_in_atlas = Vector2i(5, 5)
+0:10/0 = 0
+0:10/0/terrain_set = 0
+0:10/0/terrain = 0
+0:10/0/terrains_peering_bit/right_side = 0
+0:10/0/terrains_peering_bit/top_side = 0
+5:10/size_in_atlas = Vector2i(5, 5)
+5:10/0 = 0
+5:10/0/terrain_set = 0
+5:10/0/terrain = 0
+5:10/0/terrains_peering_bit/left_side = 0
+5:10/0/terrains_peering_bit/top_side = 0
+10:10/size_in_atlas = Vector2i(5, 5)
+10:10/0 = 0
+10:10/0/terrain_set = 0
+10:10/0/terrain = 0
+10:10/0/terrains_peering_bit/top_side = 0
+15:10/size_in_atlas = Vector2i(5, 5)
+15:10/0 = 0
+15:10/0/terrain_set = 0
+15:10/0/terrain = 0
+15:10/0/terrains_peering_bit/right_side = 0
+
+[resource]
+terrain_set_0/mode = 0
+terrain_set_0/terrain_0/name = "Terrain 0"
+terrain_set_0/terrain_0/color = Color(0.5, 0.34375, 0.25, 1)
+sources/0 = SubResource("TileSetAtlasSource_u0kfw")

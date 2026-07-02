@@ -1,0 +1,9 @@
+[gd_scene format=3 uid="uid://bbsrs5q40o81j"]
+
+[ext_resource type="TileSet" uid="uid://sj45l53dar4j" path="res://Art/Tilesets/UnitOverlay/unit_overlay.tres" id="1_p03gi"]
+[ext_resource type="Script" uid="uid://8rw7rc7l48d" path="res://Scripts/Game/Combat/CombatUI/UnitOverlay/UnitOverlay.cs" id="2_3572f"]
+
+[node name="UnitOverlay" type="TileMapLayer" unique_id=725843794]
+modulate = Color(1, 1, 1, 0.35686275)
+tile_set = ExtResource("1_p03gi")
+script = ExtResource("2_3572f")

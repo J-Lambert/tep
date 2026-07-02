@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://d1skbp86cs3sk" path="res://Scripts/Game/Combat/CombatTile/CombatTile.cs" id="1_5kclj"]
 
-[node name="Tile" type="Node2D" unique_id=590998106 node_paths=PackedStringArray("TileSprite")]
+[node name="CombatTile" type="Node2D" unique_id=590998106 node_paths=PackedStringArray("TileSprite")]
 script = ExtResource("1_5kclj")
 TileSprite = NodePath("Sprite")
 

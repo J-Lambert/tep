@@ -3,18 +3,38 @@
 [ext_resource type="Script" uid="uid://62aknbhc7obr" path="res://Scripts/Game/Combat/CombatBoard/CombatBoard.cs" id="1_qn5f1"]
 [ext_resource type="PackedScene" uid="uid://dl37x32hqayg8" path="res://Scenes/CombatTile/CombatTile.tscn" id="2_nydrt"]
 [ext_resource type="Texture2D" uid="uid://bwpf1wtm3jwef" path="res://Art/Sprites/CombatTiles/combat_tile_white.png" id="3_bspgx"]
+[ext_resource type="Resource" uid="uid://ca6bx4pvsxx3i" path="res://Resources/CombatGrid/CombatGrid.tres" id="3_ewal8"]
 [ext_resource type="Texture2D" uid="uid://dgxovxw3vqthw" path="res://Art/Sprites/CombatTiles/combat_tile_black.png" id="4_ewal8"]
+[ext_resource type="PackedScene" uid="uid://bbsrs5q40o81j" path="res://Scenes/Units/UI/UnitOverlay/UnitOverlay.tscn" id="6_h52xq"]
+[ext_resource type="PackedScene" uid="uid://vgmyx41mlndv" path="res://Scenes/Units/UI/UnitPath/UnitPath.tscn" id="7_o5nvd"]
+[ext_resource type="PackedScene" uid="uid://bk6uw5fjxhym3" path="res://Scenes/Units/Unit.tscn" id="8_o5nvd"]
+[ext_resource type="PackedScene" uid="uid://cphcuek6d0cks" path="res://Scenes/Cursor/Cursor.tscn" id="9_lfqj2"]
 
 [node name="CombatBoard" type="Node2D" unique_id=1011392558]
 script = ExtResource("1_qn5f1")
 TileScene = ExtResource("2_nydrt")
-BoardWidth = 100
-BoardHeight = 100
+Grid = ExtResource("3_ewal8")
 MainTileTexture = ExtResource("3_bspgx")
 AltTileTexture = ExtResource("4_ewal8")
+
+[node name="UnitOverlay" parent="." unique_id=725843794 instance=ExtResource("6_h52xq")]
+
+[node name="UnitPath" parent="." unique_id=100269267 instance=ExtResource("7_o5nvd")]
 
 [node name="CombatCamera" type="Camera2D" parent="." unique_id=2115592925]
 
 [node name="TileContainer" type="Node2D" parent="." unique_id=611659738]
 
 [node name="UnitContainer" type="Node2D" parent="." unique_id=159639163]
+
+[node name="Unit" parent="." unique_id=1812090049 instance=ExtResource("8_o5nvd")]
+position = Vector2(972, 519)
+
+[node name="Unit2" parent="." unique_id=331927057 instance=ExtResource("8_o5nvd")]
+position = Vector2(1057, 591)
+
+[node name="Cursor" parent="." unique_id=2111927244 instance=ExtResource("9_lfqj2")]
+position = Vector2(987, 565)
+
+[connection signal="AcceptPressed" from="Cursor" to="." method="OnCursorAcceptPressed"]
+[connection signal="CursorMoved" from="Cursor" to="." method="OnCursorMoved"]

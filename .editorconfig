@@ -5,3 +5,15 @@ charset = utf-8
 
 # IDE0130: Namespace does not match folder structure
 dotnet_diagnostic.IDE0130.severity = none
+
+# IDE0090: Use 'new(...)'
+csharp_style_implicit_object_creation_when_type_is_apparent = false
+
+# IDE0305: Simplify collection initialization
+dotnet_style_prefer_collection_expression = never
+
+# IDE0090: Use 'new(...)'
+dotnet_diagnostic.IDE0090.severity = none
+
+# IDE0305: Simplify collection initialization
+dotnet_style_prefer_collection_expression = never
