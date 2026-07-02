@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace TEP.Game.Combat
 {
-	/* Represents a unit on the combat board. The board manages the Unit's position inside the grid.
+	/* Represents a unit on the combat board. The board manages the Unit's position.
 	   The unit itself is only a visual representation. */
 	public partial class Unit : Node2D
 	{
@@ -13,15 +13,15 @@ namespace TEP.Game.Combat
 		// Distance to which the unit can walk in tiles.
 		[Export(PropertyHint.Range, "0, 500")] public int MoveRange = 6;
 
-		[Export] public CombatBoard Board;
-
 		// Texture representing the unit.
 		[Export] public Texture2D UnitTexture;
 
 		// Unit's move speed in pixels, when it's moving along a path.
 		[Export] public float MoveSpeed = 600.0f;
 
-		// Coordinates of the grid's tile the unit is on.
+		private CombatBoard _board;
+
+		// Coordinates of the board's tile the unit is on.
 		public Vector2I Tile
 		{
 			get => _tile;
@@ -52,6 +52,11 @@ namespace TEP.Game.Combat
 		private Sprite2D _sprite;
 		private AnimationPlayer _animPlayer;
 
+		public void Initialize(CombatBoard board)
+		{
+			_board = board;
+		}
+
 		public override void _Ready()
 		{
 			SetProcess(false);
@@ -63,10 +68,6 @@ namespace TEP.Game.Combat
 			{
 				_sprite.Texture = UnitTexture;
 			}
-
-			// Initialize the tile property & snap the unit to the tile's center on the map.
-			Tile = Board.WorldToTile(Position);
-			Position = Board.TileToWorld(Tile);
 		}
 
 		public override void _Process(double delta)
@@ -126,10 +127,10 @@ namespace TEP.Game.Combat
 
 		private void SetTile(Vector2I value)
 		{
-			_tile = Board.Clamp(value);
+			_tile = _board.Clamp(value);
 		}
 
-		// Starts unit moving along the path, an array of grid coordinates converted to map coordinates.
+		// Starts unit moving along the path, an array of board coordinates converted to map coordinates.
 		public void WalkAlong(List<Vector2I> path)
 		{
 			if (path == null || path.Count == 0)
@@ -142,7 +143,7 @@ namespace TEP.Game.Combat
 
 			for (int i = 1; i < path.Count; i++)
 			{
-				_waypoints.Enqueue(Board.TileToWorld(path[i]));
+				_waypoints.Enqueue(_board.TileToWorld(path[i]));
 			}
 
 			if (_waypoints.Count == 0)

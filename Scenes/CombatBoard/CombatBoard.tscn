@@ -12,6 +12,7 @@
 [node name="CombatBoard" type="Node2D" unique_id=1011392558]
 script = ExtResource("1_qn5f1")
 TileScene = ExtResource("2_nydrt")
+UnitScene = ExtResource("8_o5nvd")
 MainTileTexture = ExtResource("3_bspgx")
 AltTileTexture = ExtResource("4_ewal8")
 
@@ -24,14 +25,6 @@ AltTileTexture = ExtResource("4_ewal8")
 [node name="TileContainer" type="Node2D" parent="." unique_id=611659738]
 
 [node name="UnitContainer" type="Node2D" parent="." unique_id=159639163]
-
-[node name="Unit" parent="." unique_id=1812090049 node_paths=PackedStringArray("Board") instance=ExtResource("8_o5nvd")]
-position = Vector2(972, 519)
-Board = NodePath("..")
-
-[node name="Unit2" parent="." unique_id=331927057 node_paths=PackedStringArray("Board") instance=ExtResource("8_o5nvd")]
-position = Vector2(1057, 591)
-Board = NodePath("..")
 
 [node name="Cursor" parent="." unique_id=2111927244 instance=ExtResource("9_lfqj2")]
 position = Vector2(987, 565)

@@ -1,6 +1,6 @@
 namespace TEP.Game.Combat.UI
 {
-	// Player-controlled cursor used to navigate the game grid & to select & move units.
+	// Player-controlled cursor used to navigate the game board & to select & move units.
 	public partial class Cursor : Node2D
 	{
 		// Emitted when clicking on the currently hovered tile, or when pressing "ui_accept".
@@ -45,7 +45,7 @@ namespace TEP.Game.Combat.UI
 
 		private void SetTile(Vector2I value)
 		{
-			// Clamp tile coordinates & ensure it's not outside the grid's boundaries.
+			// Clamp tile coordinates & ensure it's not outside the board's boundaries.
 			Vector2I newTile = _board.Clamp(value);
 			if (newTile.Equals(_tile))
 			{

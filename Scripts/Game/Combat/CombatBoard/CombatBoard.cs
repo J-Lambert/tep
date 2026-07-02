@@ -6,16 +6,18 @@ using TEP.Game.Core;
 
 namespace TEP.Game.Combat
 {
-	/* Represents a grid of tiles with its size, the size of each tile in pixels, & some helper functions to calculate
+	/* Represents a board of tiles with its size, the size of each tile in pixels, & some helper functions to calculate
 	   & convert coordinates. Meant to be shared between game objects that need access to those values.*/
 	public partial class CombatBoard : Node2D
 	{
 		[Export] public PackedScene TileScene;
+		//TODO: REMOVE THIS LINE, JUST FOR TESTING
+		[Export] public PackedScene UnitScene;
 		[Export] public Texture2D MainTileTexture;
 		[Export] public Texture2D AltTileTexture;
 
-		// The grid's size in rows & columns.
-		[Export(PropertyHint.Range, "1,500")] public Vector2I GridSize = new(9, 9);
+		// The board's size in rows & columns.
+		[Export(PropertyHint.Range, "1,500")] public Vector2I BoardSize = new(9, 9);
 		// The size of a tile in pixels.
         [Export(PropertyHint.Range, "1,1024")] public Vector2I TileSize = new(16, 16);
 
@@ -23,7 +25,7 @@ namespace TEP.Game.Combat
 		[Export(PropertyHint.Range, "-3.0,3.0,0.01")] public float BoardPaddingX = 0.1f;
 		[Export(PropertyHint.Range, "-3.0,3.0,0.01")] public float BoardPaddingY = 0.1f;
 
-		/* Each key-value pair in the dictionary represents a unit. The key is the position in grid
+		/* Each key-value pair in the dictionary represents a unit. The key is the position in board
 		   coordinates, while the value is a reference to the unit. */
 		private Dictionary<Vector2I, Unit> _units = [];
 		private Unit _activeUnit;
@@ -37,7 +39,7 @@ namespace TEP.Game.Combat
 		private Node2D _unitContainer;
 		private Camera2D _camera;
 
-		// Used to calculate the center of a grid tile in pixels.
+		// Used to calculate the center of a board tile in pixels.
         private Vector2 _halfTileSize => TileSize / 2;
 		private CombatTile[,] _tiles;
 
@@ -60,6 +62,10 @@ namespace TEP.Game.Combat
 					RegisterUnit(unit);
 				}
 			}
+
+			//TODO: REMOVE THESE LINES, JUST FOR TESTING
+			SpawnUnit(UnitScene, new Vector2I(0, 0));
+			SpawnUnit(UnitScene, new Vector2I(5, 3));
 		}
 
         public override void _UnhandledInput(InputEvent @event)
@@ -108,7 +114,7 @@ namespace TEP.Game.Combat
 				Vector2I current = stack.Pop();
 
 				// Conditions to fill further:
-				// 1. Not past the grid's limits.
+				// 1. Not past the board's limits.
 				if (IsWithinBounds(current))
 				{
 					continue;
@@ -155,11 +161,11 @@ namespace TEP.Game.Combat
 		private void GenerateBoard()
 		{
 			// Initializes 2D array of tiles with a set width & height.
-			_tiles = new CombatTile[GridSize.X, GridSize.Y];
+			_tiles = new CombatTile[BoardSize.X, BoardSize.Y];
 
-			for (int y = 0; y < GridSize.Y; y++)
+			for (int y = 0; y < BoardSize.Y; y++)
 			{
-				for (int x = 0; x < GridSize.X; x++)
+				for (int x = 0; x < BoardSize.X; x++)
 				{
 					CombatTile tile = TileScene.Instantiate<CombatTile>();
 
@@ -179,7 +185,7 @@ namespace TEP.Game.Combat
 
 		public CombatTile GetTile(Vector2I position)
 		{
-			if (position.X < 0 || position.Y < 0 || position.X >= GridSize.X || position.Y >= GridSize.Y)
+			if (position.X < 0 || position.Y < 0 || position.X >= BoardSize.X || position.Y >= BoardSize.Y)
 			{
 				return null;
 			}
@@ -236,6 +242,7 @@ namespace TEP.Game.Combat
 			// Return early from the function if the unit's not registered in the tile.
 			if (!_units.ContainsKey(tile))
 			{
+				GD.Print($"{_units.Keys}");
 				return;
 			}
 
@@ -251,8 +258,8 @@ namespace TEP.Game.Combat
 		{
 			_camera.Enabled = true;
 
-			float boardPixelWidth = GridSize.X * TileSize.X;
-			float boardPixelHeight = GridSize.Y * TileSize.Y;
+			float boardPixelWidth = BoardSize.X * TileSize.X;
+			float boardPixelHeight = BoardSize.Y * TileSize.Y;
 
 			Vector2 viewportSize = GetViewportRect().Size;
 
@@ -266,6 +273,20 @@ namespace TEP.Game.Combat
 			_camera.Position = new Vector2(boardPixelWidth / 2.0f, boardPixelHeight / 2.0f);
 
 			_camera.Zoom = new Vector2(zoom * (1 - BoardPaddingX), zoom * (1 - BoardPaddingY));
+		}
+
+		public Unit SpawnUnit(PackedScene scene, Vector2I tile)
+		{
+			Unit unit = scene.Instantiate<Unit>();
+
+			unit.Initialize(this);
+
+			_unitContainer.AddChild(unit);
+
+			unit.Tile = tile;
+			unit.Position = TileToWorld(tile);
+
+			return unit;
 		}
 
 		public void UnregisterUnit(Unit unit)
@@ -310,10 +331,10 @@ namespace TEP.Game.Combat
 		// Converts 2D tile coordinates into a 1D array index.
         public int AsIndex(Vector2I tile)
         {
-            return tile.X + GridSize.X * tile.Y;
+            return tile.X + BoardSize.X * tile.Y;
         }
 
-        // Returns the coordinates of the tile on the grid given a position on the map.
+        // Returns the coordinates of the tile on the board given a position on the map.
         public Vector2I WorldToTile(Vector2 worldPos)
         {
             return (Vector2I)(worldPos / TileSize).Floor();
@@ -325,23 +346,23 @@ namespace TEP.Game.Combat
             return tilePosInBoard * TileSize + _halfTileSize;
         }
 
-        // Makes the gridPosition fit within the grid's bounds by clamping each of the vector's values individually.
-        public Vector2I Clamp(Vector2I gridPos)
+        // Makes the boardPos fit within the board's bounds by clamping each of the vector's values individually.
+        public Vector2I Clamp(Vector2I boardPos)
         {
-            Vector2I clampedPos = gridPos;
+            Vector2I clampedPos = boardPos;
 
-            clampedPos.X = Mathf.Clamp(gridPos.X, 0, GridSize.X - 1);
-            clampedPos.Y = Mathf.Clamp(gridPos.Y, 0, GridSize.Y - 1);
+            clampedPos.X = Mathf.Clamp(boardPos.X, 0, BoardSize.X - 1);
+            clampedPos.Y = Mathf.Clamp(boardPos.Y, 0, BoardSize.Y - 1);
 
             return clampedPos;
         }
 
-        /* Returns true if the passed in tile coordinates are within the grid.
-           Used to ensure the cursor/units can never go past the grid's limits. */
+        /* Returns true if the passed in tile coordinates are within the board.
+           Used to ensure the cursor/units can never go past the board's limits. */
         public bool IsWithinBounds(Vector2I tileCoords)
         {
-            bool insideX = tileCoords.X >= 0 && tileCoords.X < GridSize.X;
-            bool insideY = tileCoords.Y >= 0 && tileCoords.Y < GridSize.Y;
+            bool insideX = tileCoords.X >= 0 && tileCoords.X < BoardSize.X;
+            bool insideY = tileCoords.Y >= 0 && tileCoords.Y < BoardSize.Y;
 
             return insideX && insideY;
         }
