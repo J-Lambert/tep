@@ -17,7 +17,7 @@ namespace TEP.Game.Combat
 		[Export] public Texture2D UnitTexture;
 
 		// Unit's move speed in pixels, when it's moving along a path.
-		[Export] public float MoveSpeed = 600.0f;
+		[Export(PropertyHint.Range, "0,10000")] public float MoveSpeed = 600.0f;
 
 		private CombatBoard _board;
 
@@ -89,7 +89,7 @@ namespace TEP.Game.Combat
 
 			Position = Position.MoveToward(_targetPosition, speed);
 
-			if (Position == _targetPosition)
+			if (Position.DistanceSquaredTo(_targetPosition) < 0.01f)
 			{
 				Position = _targetPosition;
 

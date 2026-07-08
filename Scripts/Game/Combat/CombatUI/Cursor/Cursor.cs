@@ -4,10 +4,10 @@ namespace TEP.Game.Combat.UI
 	public partial class Cursor : Node2D
 	{
 		// Emitted when clicking on the currently hovered tile, or when pressing "ui_accept".
-		[Signal] public delegate void AcceptPressedEventHandler(Vector2 tile);
+		[Signal] public delegate void AcceptPressedEventHandler(Vector2I tile);
 
 		// Emitted when the cursor is moved to a new tile.
-		[Signal] public delegate void CursorMovedEventHandler(Vector2 newTile);
+		[Signal] public delegate void CursorMovedEventHandler(Vector2I newTile);
 
 		// Coordinates of the current tile the cursor is hovering.
 		public Vector2I Tile
@@ -23,7 +23,7 @@ namespace TEP.Game.Combat.UI
 		public override void _Ready()
 		{
 			_board = GetParent<CombatBoard>();
-			_board.TileToWorld(_tile);
+			Tile = _tile;
 		}
 
         public override void _UnhandledInput(InputEvent @event)

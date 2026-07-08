@@ -59,6 +59,7 @@ _data = {
 [node name="Unit" type="Node2D" unique_id=1812090049]
 script = ExtResource("1_t8my3")
 UnitTexture = ExtResource("1_7bw4q")
+MoveSpeed = 80.0
 
 [node name="Sprite" type="Sprite2D" parent="." unique_id=573056320]
 texture_filter = 1

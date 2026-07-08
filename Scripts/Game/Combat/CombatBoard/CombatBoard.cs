@@ -55,14 +55,6 @@ namespace TEP.Game.Combat
 			GenerateBoard();
 			SetupCamera();
 
-			foreach (Node child in _unitContainer.GetChildren())
-			{
-				if (child is Unit unit)
-				{
-					RegisterUnit(unit);
-				}
-			}
-
 			//TODO: REMOVE THESE LINES, JUST FOR TESTING
 			SpawnUnit(UnitScene, new Vector2I(0, 0));
 			SpawnUnit(UnitScene, new Vector2I(5, 3));
@@ -115,7 +107,7 @@ namespace TEP.Game.Combat
 
 				// Conditions to fill further:
 				// 1. Not past the board's limits.
-				if (IsWithinBounds(current))
+				if (!IsWithinBounds(current))
 				{
 					continue;
 				}
@@ -242,7 +234,6 @@ namespace TEP.Game.Combat
 			// Return early from the function if the unit's not registered in the tile.
 			if (!_units.ContainsKey(tile))
 			{
-				GD.Print($"{_units.Keys}");
 				return;
 			}
 
@@ -285,6 +276,8 @@ namespace TEP.Game.Combat
 
 			unit.Tile = tile;
 			unit.Position = TileToWorld(tile);
+
+			RegisterUnit(unit);
 
 			return unit;
 		}

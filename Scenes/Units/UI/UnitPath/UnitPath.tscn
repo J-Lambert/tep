@@ -4,5 +4,6 @@
 [ext_resource type="Script" uid="uid://y1itqivrtuc2" path="res://Scripts/Game/Combat/CombatUI/UnitPath/UnitPath.cs" id="2_245ky"]
 
 [node name="UnitPath" type="TileMapLayer" unique_id=100269267]
+scale = Vector2(0.1, 0.1)
 tile_set = ExtResource("1_0r86r")
 script = ExtResource("2_245ky")
